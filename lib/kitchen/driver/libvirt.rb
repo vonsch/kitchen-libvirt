@@ -53,7 +53,7 @@ module Kitchen
       default_config :persistent, true
 
       # The base image to clone for the domain
-      default_config(:image_name, &:default_image)
+      default_config :image_name, nil
 
       # The base image format
       default_config :image_format, 'raw'
@@ -195,8 +195,12 @@ module Kitchen
         # Use the domain name as our volume base name.
         base_name = domain_name
 
+        if not config[:image_name]
+          config[:image_name] = default_image
+        end
+
         # Clone our root volume from our base image.
-        root_volume = clone_volume(default_image, "#{base_name}-root")
+        root_volume = clone_volume(config[:image_name], "#{base_name}-root")
 
         # Return the array of created volumes
         [root_volume].concat(
